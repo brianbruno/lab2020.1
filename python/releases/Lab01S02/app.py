@@ -14,7 +14,7 @@ def run_query(json, headers): # A simple function to use requests.post to make t
 
 query = """
 query example{
-  search(query:"stars:>100", type:REPOSITORY, first:50) {
+  search(query:"stars:>100", type:REPOSITORY, first:50 {AFTER}) {
     pageInfo{
         hasNextPage
         endCursor
@@ -23,6 +23,11 @@ query example{
       ... on Repository{
         nameWithOwner
         url
+        createdAt
+        updatedAt
+        primaryLanguage {
+          id
+        }
         stargazers {
           totalCount
         }
@@ -33,11 +38,18 @@ query example{
         pullRequests{
           totalCount
         }
+        acceptedsPullRequests: pullRequests(states:MERGED)
+				{
+        	totalCount
+        }
+        closedIssues: issues(states:CLOSED)
+        {
+          totalCount
+        }
         primaryLanguage {
           name
         }
-        issues{
-          
+        issues{          
           totalCount
         }
         releases{
@@ -55,7 +67,7 @@ json = {
     "query":finalQuery, "variables":{}
 }
 
-token = 'b86bb92aa54dcef4d2b470ecf46ee6a01ac3dc7d' #insert your token
+token = 'b86bb92aa54dcef4d2b470ecf46ee6a01ac3dc7d0' #insert your token
 headers = {"Authorization": "Bearer " + token} 
 
 total_pages = 1
@@ -76,5 +88,6 @@ while (next_page and total_pages < 20):
 
 #saving data
 for node in nodes:
+    print(node)
     with open("repos.csv", 'a') as the_file:
         the_file.write(node['nameWithOwner'] + "," + node['createdAt'] + "\n") 
