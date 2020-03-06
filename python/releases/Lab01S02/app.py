@@ -76,12 +76,11 @@ nodes = result['data']['search']['nodes']
 next_page  = result["data"]["search"]["pageInfo"]["hasNextPage"]
 
 #paginating
-while (next_page and total_pages < 100):
+while (next_page and total_pages < 101):
+    print("Paginas: "+str(total_pages))
+    time.sleep(15)
+    total_pages += 1
     try:
-
-      print("Paginas: "+str(total_pages))
-      time.sleep(30)
-      total_pages += 1
       cursor = result["data"]["search"]["pageInfo"]["endCursor"]
       next_query = query.replace("{AFTER}", ", after: \"%s\"" % cursor)
       json["query"] = next_query
@@ -106,4 +105,4 @@ while (next_page and total_pages < 100):
             str(node['totalIssues']['totalCount']) + "\n") 
     except:
       print('Tentando novamente')
-      time.sleep(60)
+      time.sleep(30)
